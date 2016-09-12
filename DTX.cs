@@ -41,8 +41,6 @@ namespace DtxCS
 
     /// <summary>
     /// Parses the entirety of a .dta file in plain text into a DataArray.
-    /// Todo: fix string/symbol issue
-    /// Todo: add directive and variable support
     /// </summary>
     /// <param name="data"></param>
     public static DataArray FromDtaString(string data)
@@ -51,6 +49,14 @@ namespace DtxCS
       ParseString(data, root);
       return root;
     }
+
+    /// <summary>
+    /// Parses the entirety of a .dta file in a stream to a DataArray.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public static DataArray FromDtaStream(System.IO.Stream data)
+      => FromDtaString(new UTF8Encoding(false).GetString(data.ReadBytes((int)data.Length)));
 
     enum ParseState
     {
@@ -72,8 +78,11 @@ namespace DtxCS
       data += " "; // this ensures we parse the whole string...
       DataArray current = root;
       string tmp_literal = "";
+      int line = 1;
       for (int i = 0; i < data.Length; i++)
       {
+        if (data[i] == '\uFEFF') continue;
+        if (data[i] == '\n') line++;
         switch (state)
         {
           case ParseState.whitespace:
@@ -99,9 +108,9 @@ namespace DtxCS
               case '}':
               case ')':
               case ']':
-                if(data[i] != current.ClosingChar)
+                if(data[i] != current.ClosingChar || current.Parent == null)
                 {
-                  throw new Exception("Mismatched brace types encountered.");
+                  throw new Exception($"Mismatched closing brace encountered at line {line}.");
                 }
                 current = current.Parent;
                 break;
@@ -152,6 +161,18 @@ namespace DtxCS
                 }
                 current = current.Parent;
                 state = ParseState.whitespace;
+                break;
+              case '(':
+                AddLiteral(current, tmp_literal);
+                current = (DataArray)current.AddNode(new DataArray());
+                break;
+              case '{':
+                AddLiteral(current, tmp_literal);
+                current = (DataArray)current.AddNode(new DataCommand());
+                break;
+              case '[':
+                AddLiteral(current, tmp_literal);
+                current = (DataArray)current.AddNode(new DataMacroDefinition());
                 break;
               default:
                 tmp_literal += data[i];

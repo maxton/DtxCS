@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DtxCS", "DtxCS.csproj", "{8651B5C6-B8F9-4A30-A4E6-37D6CA367306}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DtxCS", "Library\DtxCS.csproj", "{8651B5C6-B8F9-4A30-A4E6-37D6CA367306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTAView", "..\DTAView\DTAView.csproj", "{86AAA4EB-27E1-42F2-832D-467A0ADEA4F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTAView", "DTAView\DTAView.csproj", "{86AAA4EB-27E1-42F2-832D-467A0ADEA4F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

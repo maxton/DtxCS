@@ -10,9 +10,11 @@ the scripting functionality itself.
 ## Supported Features
 - Read data from plaintext DTA or serialized/encrypted DTB format
 - Execute script commands (some builtins, such as for basic arithmetic, are included)
+- Export/view plaintext DTA from root array
 
 ## Not yet supported
 - True directive support (#merge, #include, #ifdef, #define, etc)
 - Variables
 - Function definitions / variable capture / Dynamic scoping
 - Object binding / message passing system
+- Re-serializing to DTB

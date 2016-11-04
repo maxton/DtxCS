@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using DtxCS.DataTypes;
 namespace DtxCS
 {
@@ -27,6 +28,7 @@ namespace DtxCS
       Funcs.Add(DataSymbol.Symbol(">"),          Gt);
       Funcs.Add(DataSymbol.Symbol("<"),          Lt);
       Funcs.Add(DataSymbol.Symbol("-"),          Subtract);
+      Funcs.Add(DataSymbol.Symbol("if"),         If);
     }
     static DataNode Abs(DataCommand input)
     {
@@ -108,6 +110,15 @@ namespace DtxCS
         return new DataAtom(args.Int(1) - args.Int(2));
       }
       return new DataAtom(args.Number(1) - args.Number(2));
+    }
+
+    static DataNode If(DataCommand input)
+    {
+      if ((input.Children[1].Evaluate() as DataAtom).Int == 0)
+      {
+        return input.Children[3].Evaluate();
+      }
+      return input.Children[2].Evaluate();
     }
   }
 }

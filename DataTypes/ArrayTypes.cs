@@ -214,9 +214,11 @@ namespace DtxCS.DataTypes
     public override string ToString(int depth)
     {
       string ret = new string(' ', depth*3) + "(";
-      foreach (DataNode n in Children)
+      for (int i = 0; i < Children.Count; i++)
       {
-        ret += (n is DataArray ? Environment.NewLine + n.ToString(depth + 1) : n.ToString(depth + 1) + " ");
+        var n = Children[i];
+        ret += n is DataArray ? Environment.NewLine + n.ToString(depth + 1) : n.ToString(depth + 1);
+        if (i + 1 != Children.Count) ret += " ";
       }
       ret += ")";
       return ret;

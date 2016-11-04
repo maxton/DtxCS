@@ -1,14 +1,23 @@
-﻿namespace DtxCS.DataTypes
+﻿using System;
+
+namespace DtxCS.DataTypes
 {
+
   public abstract class DataDirective : DataNode
   {
     public override string Name { get; }
     public override string ToString() => Name + " " + constant;
+
+    public override string ToString(int depth)
+    {
+      depth = depth <= 0 ? 1 : depth;
+      return Environment.NewLine + Name + " " + constant + Environment.NewLine + new string(' ',--depth*3);
+    }
     public override DataType Type { get; }
 
     public override DataNode Evaluate() => this;
 
-    private string constant;
+    protected string constant;
 
     internal DataDirective(string name, DataType type, string constant)
     {
@@ -24,7 +33,18 @@
   }
   public class DataDefine : DataDirective
   {
-    public DataDefine(string constant) : base("#define", DataType.DEFINE, constant) { }
+    private DataNode def;
+
+    public DataDefine(string constant, DataNode definition) : base("#define", DataType.DEFINE, constant)
+    {
+      this.def = definition;
+    }
+
+    public override string ToString(int depth)
+    {
+      depth = depth <= 0 ? 1 : depth;
+      return Environment.NewLine + Name + " " + constant + " " + def.ToString() + Environment.NewLine + new string(' ', --depth * 3);
+    }
   }
   public class DataIfNDef : DataDirective
   {
@@ -40,10 +60,10 @@
   }
   public class DataElse : DataDirective
   {
-    public DataElse() : base("#else", DataType.ELSE, "") { }
+    public DataElse() : base("#else", DataType.ELSE, null) { }
   }
   public class DataEndIf : DataDirective
   {
-    public DataEndIf() : base("#endif", DataType.ENDIF, "") { }
+    public DataEndIf() : base("#endif", DataType.ENDIF, null) { }
   }
 }

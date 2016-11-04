@@ -323,7 +323,10 @@ namespace DtxCS
             s.Position += 4;
             break;
           case DataType.DEFINE:
-            ret.AddNode(new DataDefine(s.ReadLengthUTF8()));
+            var constant = s.ReadLengthUTF8();
+            numChildren--;
+            var definition = parse_children(s, 1, DataType.ARRAY, newDtb).Array(0);
+            ret.AddNode(new DataDefine(constant, definition));
             break;
           case DataType.IFDEF:
             ret.AddNode(new DataIfDef(s.ReadLengthUTF8()));

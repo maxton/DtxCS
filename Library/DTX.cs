@@ -261,23 +261,33 @@ namespace DtxCS
         }
       }
       uint rootNodes = dtb.ReadUInt16LE();
+      dtb.Position = 1;
+      uint rootNodes2 = dtb.ReadUInt32LE();
+      dtb.Position = 3;
       if (rootNodes == 0)
       {
         dtb.Position = 5;
         rootNodes = dtb.ReadUInt32LE();
         uint unk = dtb.ReadUInt16LE();
-        root = parse_children(dtb, rootNodes, DataType.ARRAY, true);
+        root = parse_children(dtb, rootNodes, DataType.ARRAY, 2);
+      }
+      else if (rootNodes == rootNodes2)
+      {
+        dtb.Position = 5;
+        rootNodes = dtb.ReadUInt16LE();
+        uint unk = dtb.ReadUInt16LE();
+        root = parse_children(dtb, rootNodes, DataType.ARRAY, 3);
       }
       else
       {
         dtb.ReadInt32LE(); // unknown, always = 1
-        root = parse_children(dtb, rootNodes);
+        root = parse_children(dtb, rootNodes, DataType.ARRAY, 1);
       }
 
       return root;
     }
 
-    static DataArray parse_children(System.IO.Stream s, uint numChildren, DataType type = DataType.ARRAY, bool newDtb = false)
+    static DataArray parse_children(System.IO.Stream s, uint numChildren, DataType type = DataType.ARRAY, int version = 1)
     {
       DataArray ret = type == DataType.MACRO ? new DataMacroDefinition()
                             : type == DataType.COMMAND ? new DataCommand() 
@@ -302,18 +312,25 @@ namespace DtxCS
           case DataType.ARRAY:
           case DataType.COMMAND:
           case DataType.MACRO:
-            if (newDtb)
+            if (version == 2)
             {
               s.Position += 4;
               uint nC = s.ReadUInt32LE();
               ushort unk = s.ReadUInt16LE();
-              ret.AddNode(parse_children(s, nC, t, true));
+              ret.AddNode(parse_children(s, nC, t, version));
+            }
+            else if(version == 3)
+            {
+              s.Position += 4;
+              ushort nC = s.ReadUInt16LE();
+              s.Position += 2;
+              ret.AddNode(parse_children(s, nC, t, version));
             }
             else
             {
               ushort nC = s.ReadUInt16LE(); // numChildren
               s.Position += 4; // id
-              ret.AddNode(parse_children(s, nC, t, newDtb));
+              ret.AddNode(parse_children(s, nC, t, version));
             }
             break;
           case DataType.STRING:
@@ -325,7 +342,7 @@ namespace DtxCS
           case DataType.DEFINE:
             var constant = s.ReadLengthUTF8();
             numChildren--;
-            var definition = parse_children(s, 1, DataType.ARRAY, newDtb).Array(0);
+            var definition = parse_children(s, 1, DataType.ARRAY, version).Array(0);
             ret.AddNode(new DataDefine(constant, definition));
             break;
           case DataType.IFDEF:

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using DtxCS.DataTypes;
 
@@ -226,11 +227,11 @@ namespace DtxCS
     {
       int tmp_int;
       float tmp_float;
-      if (int.TryParse(tmp_literal, out tmp_int))
+      if (int.TryParse(tmp_literal, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out tmp_int))
       {
         current.AddNode(new DataAtom(tmp_int));
       }
-      else if (float.TryParse(tmp_literal, out tmp_float))
+      else if (float.TryParse(tmp_literal, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out tmp_float))
       {
         current.AddNode(new DataAtom(tmp_float));
       }

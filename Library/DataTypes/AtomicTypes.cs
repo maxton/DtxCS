@@ -170,12 +170,24 @@ namespace DtxCS.DataTypes
     public override DataType Type => DataType.SYMBOL;
 
     private string value;
+    private bool quote;
 
     private DataSymbol(string value)
     {
       this.value = value;
+      foreach(var c in value)
+      {
+        // TODO: Is this right?
+        if(c == ' ' || c == '\r' || c == '\n' || c == '\t'
+          || c == '(' || c == ')' || c == '{' || c == '}'
+          || c == '[' || c == ']')
+        {
+          quote = true;
+          break;
+        }
+      }
     }
 
-    public override string ToString() => "'" + Name + "'";
+    public override string ToString() => quote ? $"'{Name}'" : Name;
   }
 }

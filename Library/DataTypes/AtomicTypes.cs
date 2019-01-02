@@ -106,7 +106,9 @@ namespace DtxCS.DataTypes
           ret += iData.ToString();
           break;
         case DataType.FLOAT:
-          ret += fData.ToString("0.0#");
+          // Even though the format string uses a dot, it gets changed to a comma on some locales
+          // unless you give ToString the invariant culture.
+          ret += fData.ToString("0.0#", System.Globalization.NumberFormatInfo.InvariantInfo);
           break;
       }
       return ret;

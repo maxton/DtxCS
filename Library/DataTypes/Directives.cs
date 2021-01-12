@@ -66,4 +66,12 @@ namespace DtxCS.DataTypes
   {
     public DataEndIf() : base("#endif", DataType.ENDIF, null) { }
   }
+  public class DataAutorun : DataDirective
+  {
+    public DataAutorun() : base("#autorun", DataType.AUTORUN, null) { }
+  }
+  public class DataUndef : DataDirective
+  {
+    public DataUndef(string constant) : base("#undef", DataType.UNDEF, constant) { }
+  }
 }

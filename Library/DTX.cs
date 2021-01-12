@@ -366,6 +366,13 @@ namespace DtxCS
           case DataType.MERGE:
             ret.AddNode(new DataMerge(s.ReadLengthUTF8()));
             break;
+          case DataType.AUTORUN:
+            s.Position += 4;
+            ret.AddNode(new DataAutorun());
+            break;
+          case DataType.UNDEF:
+            ret.AddNode(new DataUndef(s.ReadLengthUTF8()));
+            break;
           default:
             throw new Exception("Unhandled DTB DataType " + Enum.GetName(typeof(DataType), t));
         }

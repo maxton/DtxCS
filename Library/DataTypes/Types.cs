@@ -68,7 +68,15 @@
     /// <summary>
     /// #ifndef directive
     /// </summary>
-    IFNDEF = 0x23
+    IFNDEF = 0x23,
+    /// <summary>
+    /// #autorun directive
+    /// </summary>
+    AUTORUN = 0x24,
+    /// <summary>
+    /// #undef directive
+    /// </summary>
+    UNDEF = 0x25
   };
 
   /// <summary>
